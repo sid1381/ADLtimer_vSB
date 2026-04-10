@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADL Storyboarding Workshop</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #04080f;
+    --surface: #0b1120;
+    --navy: #121d33;
+    --border: rgba(255,255,255,0.06);
+    --blue: #2563eb;
+    --blue-dim: rgba(37,99,235,0.12);
+    --accent: #38bdf8;
+    --white: #e8ecf4;
+    --muted: #4a5568;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: 
+      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(37,99,235,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 100%, rgba(56,189,248,0.03) 0%, transparent 50%);
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    width: 100%;
+    max-width: 800px;
+    padding: 0 40px;
+  }
+
+  /* Header */
+  .header {
+    margin-bottom: 72px;
+  }
+
+  .header-line {
+    width: 40px;
+    height: 1px;
+    background: var(--blue);
+    margin: 0 auto 20px;
+  }
+
+  .header-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* Timer */
+  .timer-wrapper {
+    margin-bottom: 12px;
+    position: relative;
+  }
+
+  .timer-display {
+    font-family: 'DM Mono', monospace;
+    font-size: 180px;
+    font-weight: 400;
+    letter-spacing: -4px;
+    line-height: 1;
+    color: var(--white);
+    transition: color 0.8s ease;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .timer-display .colon {
+    opacity: 0.25;
+    margin: 0 2px;
+    position: relative;
+    top: -6px;
+  }
+
+  .timer-display.warning { color: var(--warning); }
+  .timer-display.danger { color: var(--danger); }
+  .timer-display.danger .colon { animation: blink 1s step-end infinite; }
+
+  @keyframes blink {
+    0%, 100% { opacity: 0.25; }
+    50% { opacity: 0; }
+  }
+
+  .timer-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 56px;
+  }
+
+  /* Progress */
+  .progress-container {
+    width: 100%;
+    margin-bottom: 56px;
+    position: relative;
+  }
+
+  .progress-track {
+    width: 100%;
+    height: 2px;
+    background: var(--border);
+    border-radius: 1px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--blue);
+    border-radius: 1px;
+    transition: width 1s linear, background 0.8s ease;
+    width: 100%;
+    position: relative;
+  }
+
+  .progress-fill::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: -3px;
+    width: 8px;
+    height: 8px;
+    background: var(--blue);
+    border-radius: 50%;
+    box-shadow: 0 0 12px rgba(37,99,235,0.4);
+    transition: background 0.8s ease, box-shadow 0.8s ease;
+  }
+
+  .progress-fill.warning { background: var(--warning); }
+  .progress-fill.warning::after { background: var(--warning); box-shadow: 0 0 12px rgba(245,158,11,0.4); }
+  .progress-fill.danger { background: var(--danger); }
+  .progress-fill.danger::after { background: var(--danger); box-shadow: 0 0 12px rgba(239,68,68,0.4); }
+
+  .progress-times {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+
+  .progress-time {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  /* Presets */
+  .presets {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .preset-btn {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 8px 22px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    letter-spacing: 0.5px;
+  }
+
+  .preset-btn:hover {
+    color: var(--white);
+    border-color: rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.03);
+  }
+
+  .preset-btn.active {
+    color: var(--white);
+    border-color: var(--blue);
+    background: var(--blue-dim);
+  }
+
+  .custom-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: 4px;
+  }
+
+  .custom-input {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    width: 48px;
+    padding: 8px 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--white);
+    text-align: center;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .custom-input:focus { border-color: var(--blue); }
+
+  .custom-unit {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+  }
+
+  /* Controls */
+  .controls {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .ctrl-btn {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 12px 44px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .ctrl-btn.start {
+    background: var(--blue);
+    color: white;
+  }
+  .ctrl-btn.start:hover {
+    background: #3b82f6;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 24px rgba(37,99,235,0.25);
+  }
+
+  .ctrl-btn.pause {
+    background: rgba(245,158,11,0.1);
+    color: var(--warning);
+    border: 1px solid rgba(245,158,11,0.2);
+  }
+  .ctrl-btn.pause:hover { background: rgba(245,158,11,0.18); }
+
+  .ctrl-btn.reset {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+  .ctrl-btn.reset:hover {
+    color: var(--white);
+    border-color: rgba(255,255,255,0.15);
+  }
+
+  /* Finished */
+  .finished-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: var(--bg);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.6s ease;
+  }
+
+  .finished-overlay.show { display: flex; }
+
+  .finished-line {
+    width: 40px;
+    height: 1px;
+    background: var(--danger);
+    margin-bottom: 32px;
+    animation: expandLine 0.8s ease forwards;
+  }
+
+  @keyframes expandLine {
+    from { width: 0; }
+    to { width: 120px; }
+  }
+
+  .finished-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 72px;
+    font-weight: 400;
+    letter-spacing: 16px;
+    text-transform: uppercase;
+    color: var(--white);
+  }
+
+  .finished-sub {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    margin-top: 12px;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+  }
+
+  .finished-dismiss {
+    margin-top: 48px;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* Branding */
+  .brand {
+    position: absolute;
+    bottom: 28px;
+    left: 40px;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .brand-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--blue);
+    border-radius: 50%;
+  }
+
+  .brand-text {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.12);
+  }
+
+  .shortcut-hint {
+    position: absolute;
+    bottom: 28px;
+    right: 40px;
+    z-index: 1;
+    font-size: 10px;
+    color: rgba(255,255,255,0.08);
+    letter-spacing: 1px;
+  }
+
+  .shortcut-hint kbd {
+    font-family: 'DM Mono', monospace;
+    padding: 2px 6px;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 3px;
+    margin: 0 2px;
+    font-size: 9px;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div class="header-line"></div>
+    <div class="header-label">Storyboarding Workshop</div>
+  </div>
+
+  <div class="timer-wrapper">
+    <div class="timer-display" id="timer">20<span class="colon">:</span>00</div>
+  </div>
+  <div class="timer-label">Remaining</div>
+
+  <div class="progress-container">
+    <div class="progress-track">
+      <div class="progress-fill" id="progress"></div>
+    </div>
+    <div class="progress-times">
+      <span class="progress-time" id="elapsed">00:00</span>
+      <span class="progress-time" id="total">20:00</span>
+    </div>
+  </div>
+
+  <div class="presets">
+    <button class="preset-btn" onclick="setTime(5)">5</button>
+    <button class="preset-btn" onclick="setTime(10)">10</button>
+    <button class="preset-btn" onclick="setTime(15)">15</button>
+    <button class="preset-btn active" onclick="setTime(20)">20</button>
+    <button class="preset-btn" onclick="setTime(25)">25</button>
+    <button class="preset-btn" onclick="setTime(30)">30</button>
+    <div class="custom-wrap">
+      <input type="number" class="custom-input" id="customMin" min="1" max="120" placeholder="—" onchange="setTime(parseInt(this.value))">
+      <span class="custom-unit">min</span>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="ctrl-btn start" id="startBtn" onclick="startTimer()">Start</button>
+    <button class="ctrl-btn reset" onclick="resetTimer()">Reset</button>
+  </div>
+</div>
+
+<div class="finished-overlay" id="finishedOverlay">
+  <div class="finished-line"></div>
+  <div class="finished-text">Time</div>
+  <div class="finished-sub">Pencils down</div>
+  <div class="finished-dismiss">
+    <button class="ctrl-btn reset" onclick="dismissFinished()">Reset</button>
+  </div>
+</div>
+
+<div class="brand">
+  <div class="brand-dot"></div>
+  <span class="brand-text">Arthur D. Little</span>
+</div>
+
+<div class="shortcut-hint">
+  <kbd>Space</kbd> start / pause &nbsp;&nbsp; <kbd>R</kbd> reset
+</div>
+
+<script>
+  let totalSeconds = 20 * 60;
+  let remainingSeconds = totalSeconds;
+  let interval = null;
+  let isRunning = false;
+
+  const timerEl = document.getElementById('timer');
+  const progressEl = document.getElementById('progress');
+  const startBtn = document.getElementById('startBtn');
+  const finishedOverlay = document.getElementById('finishedOverlay');
+  const elapsedEl = document.getElementById('elapsed');
+  const totalEl = document.getElementById('total');
+
+  function formatTime(s) {
+    const m = Math.floor(s / 60);
+    const sec = s % 60;
+    return { m: String(m).padStart(2,'0'), s: String(sec).padStart(2,'0') };
+  }
+
+  function updateDisplay() {
+    const t = formatTime(remainingSeconds);
+    timerEl.innerHTML = `${t.m}<span class="colon">:</span>${t.s}`;
+
+    const pct = (remainingSeconds / totalSeconds) * 100;
+    progressEl.style.width = pct + '%';
+
+    const elapsedSec = totalSeconds - remainingSeconds;
+    const e = formatTime(elapsedSec);
+    elapsedEl.textContent = `${e.m}:${e.s}`;
+
+    const tot = formatTime(totalSeconds);
+    totalEl.textContent = `${tot.m}:${tot.s}`;
+
+    // States
+    timerEl.classList.remove('warning', 'danger');
+    progressEl.classList.remove('warning', 'danger');
+
+    if (remainingSeconds > 0 && remainingSeconds <= totalSeconds * 0.1) {
+      timerEl.classList.add('danger');
+      progressEl.classList.add('danger');
+    } else if (remainingSeconds <= totalSeconds * 0.2) {
+      timerEl.classList.add('warning');
+      progressEl.classList.add('warning');
+    }
+  }
+
+  function startTimer() {
+    if (isRunning) {
+      clearInterval(interval);
+      isRunning = false;
+      startBtn.textContent = 'Resume';
+      startBtn.classList.remove('pause');
+      startBtn.classList.add('start');
+      return;
+    }
+
+    isRunning = true;
+    startBtn.textContent = 'Pause';
+    startBtn.classList.remove('start');
+    startBtn.classList.add('pause');
+
+    interval = setInterval(() => {
+      remainingSeconds--;
+      updateDisplay();
+      if (remainingSeconds <= 0) {
+        clearInterval(interval);
+        isRunning = false;
+        finishedOverlay.classList.add('show');
+      }
+    }, 1000);
+  }
+
+  function resetTimer() {
+    clearInterval(interval);
+    isRunning = false;
+    remainingSeconds = totalSeconds;
+    startBtn.textContent = 'Start';
+    startBtn.classList.remove('pause');
+    startBtn.classList.add('start');
+    timerEl.classList.remove('warning', 'danger');
+    progressEl.classList.remove('warning', 'danger');
+    updateDisplay();
+  }
+
+  function setTime(minutes) {
+    if (!minutes || minutes < 1) return;
+    clearInterval(interval);
+    isRunning = false;
+    totalSeconds = minutes * 60;
+    remainingSeconds = totalSeconds;
+    startBtn.textContent = 'Start';
+    startBtn.classList.remove('pause');
+    startBtn.classList.add('start');
+
+    document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.preset-btn').forEach(b => {
+      if (b.textContent.trim() === String(minutes)) b.classList.add('active');
+    });
+
+    updateDisplay();
+  }
+
+  function dismissFinished() {
+    finishedOverlay.classList.remove('show');
+    resetTimer();
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.target.tagName === 'INPUT') return;
+    if (e.code === 'Space') { e.preventDefault(); startTimer(); }
+    if (e.code === 'KeyR') { resetTimer(); }
+    if (e.code === 'Escape') { dismissFinished(); }
+  });
+
+  updateDisplay();
+</script>
+
+</body>
+</html>
